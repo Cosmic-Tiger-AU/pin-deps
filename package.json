@@ -1,0 +1,33 @@
+{
+  "name": "@ctgr/pin-deps",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "pin-deps": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "format": "(git diff --name-only --cached; git diff --name-only; git ls-files --others --exclude-standard) | sort -u | grep -E '.(ts|js|html|css|scss|json)$' | xargs prettier --write",
+    "format-all": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}\""
+  },
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "6.0.2",
+    "@types/node": "24.12.0",
+    "prettier": "3.8.1",
+    "tsup": "8.5.1",
+    "typescript": "6.0.2"
+  },
+  "author": "Toby Boulton <toby@cosmictiger.com.au>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cosmic-Tiger-AU/pin-deps"
+  },
+  "dependencies": {
+    "chalk": "4.1.2"
+  }
+}
