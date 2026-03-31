@@ -14,7 +14,9 @@ const DEP_FIELDS = [
 
 const isUnpinned = (version: string): boolean => {
   if (/^(workspace:|git\+|http|npm:)/.test(version)) return false;
-  return /^[\^~><]/.test(version) || version === "*";
+  if (/^[\^~><]/.test(version) || version === "*") return true;
+  // Bare major ("22") or major.minor ("8.5") are not fully pinned
+  return !/^\d+\.\d+\.\d+/.test(version);
 };
 
 const requirePnpm10 = (): void => {
