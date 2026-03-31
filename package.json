@@ -4,7 +4,7 @@
   "private": false,
   "type": "module",
   "bin": {
-    "pin-deps": "./dist/index.js"
+    "pin-deps": "dist/index.js"
   },
   "files": [
     "dist"
@@ -25,7 +25,7 @@
   "author": "Toby Boulton <toby@cosmictiger.com.au>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Cosmic-Tiger-AU/pin-deps"
+    "url": "git+https://github.com/Cosmic-Tiger-AU/pin-deps.git"
   },
   "dependencies": {
     "chalk": "4.1.2"
