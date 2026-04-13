@@ -13,7 +13,7 @@ const DEP_FIELDS = [
 ] as const;
 
 /** Parse `npm:@scope/pkg@version` or `npm:pkg@version` into package name and version. */
-const parseNpmAlias = (
+export const parseNpmAlias = (
   spec: string,
 ): { packageName: string; version: string } | null => {
   // Strip "npm:" prefix
@@ -26,8 +26,8 @@ const parseNpmAlias = (
   return { packageName: rest.slice(0, atIdx), version };
 };
 
-const isUnpinned = (version: string): boolean => {
-  if (/^(workspace:|git\+|http)/.test(version)) return false;
+export const isUnpinned = (version: string): boolean => {
+  if (/^(workspace:|git\+|http|file:)/.test(version)) return false;
   if (/^npm:/.test(version)) {
     const aliasVersion = parseNpmAlias(version);
     return aliasVersion ? isUnpinned(aliasVersion.version) : false;
@@ -37,7 +37,7 @@ const isUnpinned = (version: string): boolean => {
   return !/^\d+\.\d+\.\d+/.test(version);
 };
 
-const requirePnpm10 = (): void => {
+export const requirePnpm10 = (): void => {
   let pnpmVersion = "";
   try {
     pnpmVersion = execSync("pnpm --version", { encoding: "utf-8" }).trim();
@@ -61,7 +61,7 @@ const requirePnpm10 = (): void => {
   }
 };
 
-const discoverWorkspace = (): {
+export const discoverWorkspace = (): {
   installedVersions: Map<string, string>;
   workspacePackages: Set<string>;
 } => {
@@ -118,12 +118,12 @@ const discoverWorkspace = (): {
   return { installedVersions, workspacePackages };
 };
 
-const detectIndent = (raw: string): string | number => {
+export const detectIndent = (raw: string): string | number => {
   const match = raw.match(/^[ \t]+/m);
   return match ? match[0] : 2;
 };
 
-const pinWorkspacePackages = (
+export const pinWorkspacePackages = (
   workspacePackages: Set<string>,
   installedVersions: Map<string, string>,
 ): void => {
@@ -190,4 +190,6 @@ const main = () => {
   );
 };
 
-main();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}
