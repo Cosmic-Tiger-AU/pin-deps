@@ -16,7 +16,7 @@ importers:
         specifier: 6.0.2
         version: 6.0.2(prettier@3.8.1)
       '@types/node':
-        specifier: ^24.12.2
+        specifier: 24.12.2
         version: 24.12.2
       prettier:
         specifier: 3.8.1
