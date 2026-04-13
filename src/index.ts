@@ -12,8 +12,26 @@ const DEP_FIELDS = [
   "optionalDependencies",
 ] as const;
 
+/** Parse `npm:@scope/pkg@version` or `npm:pkg@version` into package name and version. */
+const parseNpmAlias = (
+  spec: string,
+): { packageName: string; version: string } | null => {
+  // Strip "npm:" prefix
+  const rest = spec.slice(4);
+  // Find the last "@" that separates name from version (scoped packages start with @)
+  const atIdx = rest.lastIndexOf("@");
+  if (atIdx <= 0) return null;
+  const version = rest.slice(atIdx + 1);
+  if (!version) return null;
+  return { packageName: rest.slice(0, atIdx), version };
+};
+
 const isUnpinned = (version: string): boolean => {
-  if (/^(workspace:|git\+|http|npm:)/.test(version)) return false;
+  if (/^(workspace:|git\+|http)/.test(version)) return false;
+  if (/^npm:/.test(version)) {
+    const aliasVersion = parseNpmAlias(version);
+    return aliasVersion ? isUnpinned(aliasVersion.version) : false;
+  }
   if (/^[\^~><]/.test(version) || version === "*") return true;
   // Bare major ("22") or major.minor ("8.5") are not fully pinned
   return !/^\d+\.\d+\.\d+/.test(version);
@@ -128,19 +146,22 @@ const pinWorkspacePackages = (
       for (const [name, version] of Object.entries(deps)) {
         if (!isUnpinned(version)) continue;
 
-        const exact = installedVersions.get(name);
+        const alias = /^npm:/.test(version) ? parseNpmAlias(version) : null;
+        const lookupName = alias ? alias.packageName : name;
+        const exact = installedVersions.get(lookupName);
         if (exact) {
-          deps[name] = exact;
+          const pinned = alias ? `npm:${alias.packageName}@${exact}` : exact;
+          deps[name] = pinned;
           log(
             chalk.green(
-              `  [${relativePath}] Pinned ${name}: ${version} -> ${exact}`,
+              `  [${relativePath}] Pinned ${name}: ${version} -> ${pinned}`,
             ),
           );
           changed = true;
         } else {
           log(
             chalk.yellow(
-              `  [${relativePath}] Could not find exact version for "${name}". Skipping.`,
+              `  [${relativePath}] Could not find exact version for "${lookupName}". Skipping.`,
             ),
           );
         }
