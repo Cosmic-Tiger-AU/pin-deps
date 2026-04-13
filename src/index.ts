@@ -78,11 +78,10 @@ const discoverWorkspace = (): {
 
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
-      if (!pkg.name || !pkg.version) continue;
 
       if (dirPath.includes("node_modules")) {
-        // Resolved dependency — store exact version.
-        // If multiple versions exist, the last one wins.
+        if (!pkg.name || !pkg.version) continue;
+        // If multiple versions are installed, the last one wins.
         installedVersions.set(pkg.name, pkg.version);
       } else {
         workspacePackages.add(pkgJsonPath);
