@@ -37,24 +37,24 @@ export const isUnpinned = (version: string): boolean => {
   return !/^\d+\.\d+\.\d+/.test(version);
 };
 
-export const requirePnpm10 = (): void => {
+export const requirePnpm = (): void => {
   let pnpmVersion = "";
   try {
     pnpmVersion = execSync("pnpm --version", { encoding: "utf-8" }).trim();
   } catch {
     err(
       chalk.red(
-        "pnpm is not installed or not executable. Please install pnpm v10.",
+        "pnpm is not installed or not executable. Please install pnpm v11.",
       ),
     );
     process.exit(1);
   }
 
   const major = parseInt(pnpmVersion.split(".")[0], 10);
-  if (major !== 10) {
+  if (![10, 11].includes(major)) {
     err(
       chalk.red(
-        `pnpm v10 is required, but found v${pnpmVersion}. Please install pnpm >=10 <11.`,
+        `pnpm v11/v10 is required, but found v${pnpmVersion}. Please install pnpm >=10 <12.`,
       ),
     );
     process.exit(1);
@@ -180,7 +180,7 @@ export const pinWorkspacePackages = (
 };
 
 const main = () => {
-  requirePnpm10();
+  requirePnpm();
   const { installedVersions, workspacePackages } = discoverWorkspace();
   pinWorkspacePackages(workspacePackages, installedVersions);
   log(
