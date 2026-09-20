@@ -47,8 +47,14 @@ describe("requirePnpm", () => {
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
-  it("exits for unsupported pnpm v12", () => {
+  it("passes silently for pnpm v12.0.0", () => {
     vi.mocked(execSync).mockReturnValue("12.0.0\n" as any);
+    requirePnpm();
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it("exits for an unparseable pnpm version", () => {
+    vi.mocked(execSync).mockReturnValue("not-a-version\n" as any);
     expect(() => requirePnpm()).toThrow("process.exit");
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
