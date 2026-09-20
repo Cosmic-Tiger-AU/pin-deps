@@ -20,8 +20,8 @@
   "packageManager": "pnpm@12.5.1",
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "6.0.2",
-    "@types/node": "24.13.3",
-    "prettier": "3.9.6",
+    "@types/node": "24.13.6",
+    "prettier": "3.9.8",
     "tsup": "8.5.1",
     "typescript": "7.0.2",
     "vitest": "4.1.10"
