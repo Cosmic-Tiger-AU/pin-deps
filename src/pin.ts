@@ -30,7 +30,9 @@ export const detectIndent = (raw: string): string | number => {
 export const pinWorkspacePackages = (
   workspacePackages: Set<string>,
   installedVersions: Map<string, string>,
-): void => {
+): number => {
+  let pinnedCount = 0;
+
   for (const pkgPath of workspacePackages) {
     const pkgRaw = fs.readFileSync(pkgPath, "utf-8");
     const pkg = JSON.parse(pkgRaw);
@@ -71,6 +73,7 @@ export const pinWorkspacePackages = (
             ),
           );
           changed = true;
+          pinnedCount++;
         } else {
           log(
             chalk.yellow(
@@ -90,4 +93,6 @@ export const pinWorkspacePackages = (
       );
     }
   }
+
+  return pinnedCount;
 };

@@ -1,6 +1,6 @@
 {
   "name": "@ctgr/pin-deps",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": false,
   "licence": "MIT",
   "type": "module",

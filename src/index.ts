@@ -1,4 +1,6 @@
 import chalk from "chalk";
+import * as fs from "fs";
+import { fileURLToPath } from "url";
 
 import { type PackageManager, parsePackageManagerFlag } from "./detect";
 import { log } from "./log";
@@ -39,7 +41,16 @@ const main = () => {
 
   backend.require();
   const { installedVersions, workspacePackages } = backend.discover();
-  pinWorkspacePackages(workspacePackages, installedVersions);
+  const pinnedCount = pinWorkspacePackages(
+    workspacePackages,
+    installedVersions,
+  );
+
+  if (pinnedCount === 0) {
+    log(chalk.green("\nAll dependencies are already pinned. Nothing to do."));
+    return;
+  }
+
   log(
     chalk.green(
       `\nPinning complete! Run "${backend.install}" to update your lockfile.`,
@@ -47,6 +58,19 @@ const main = () => {
   );
 };
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+/** True when run directly, including via a symlinked bin (dlx/bunx/npx). */
+const isEntryPoint = (): boolean => {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return (
+      fs.realpathSync(entry) === fs.realpathSync(fileURLToPath(import.meta.url))
+    );
+  } catch {
+    return false;
+  }
+};
+
+if (isEntryPoint()) {
   main();
 }
